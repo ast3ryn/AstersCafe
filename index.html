@@ -29,6 +29,7 @@ body{
     linear-gradient(135deg, var(--bg), #140c1d 60%, #0b0710);
   min-height:100vh;
   line-height:1.6;
+  cursor: none;
 }
 
 body::before{
@@ -53,6 +54,60 @@ body::after{
 img{display:block;max-width:100%;}
 a{color:inherit;text-decoration:none;}
 
+.cursor-dot{
+  position:fixed;
+  left:0;
+  top:0;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:rgba(255,207,64,0.95);
+  box-shadow:0 0 0 4px rgba(255,207,64,0.18), 0 0 12px rgba(255,207,64,0.25);
+  pointer-events:none;
+  transform:translate(-50%, -50%) scale(1);
+  transition:transform 0.18s ease, width 0.18s ease, height 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  z-index:9999;
+  mix-blend-mode:screen;
+}
+
+.cursor-dot.cursor-hover{
+  width:28px;
+  height:28px;
+  background:rgba(255,207,64,0.9);
+  box-shadow:0 0 0 6px rgba(255,207,64,0.2), 0 0 18px rgba(255,207,64,0.28);
+}
+
+.cursor-dot.cursor-active{
+  transform:translate(-50%, -50%) scale(0.8);
+  background:rgba(255,207,64,1);
+}
+
+.cursor-particle-field{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9998;
+}
+
+.cursor-particle{
+  position:fixed;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  pointer-events:none;
+  opacity:0;
+  transform:translate(-50%, -50%) scale(1);
+  filter:blur(0.4px);
+  will-change:transform, opacity;
+}
+
+@keyframes particlePop{
+  0%{opacity:1;transform:translate(-50%, -50%) scale(1);}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2);}
+}
+
+a, .btn, .nav-link, .door-card, .service-card, .title-card, .panel{cursor:none;}
+
 .topbar{
   position:sticky;
   top:0;
@@ -66,47 +121,53 @@ a{color:inherit;text-decoration:none;}
   border-bottom:1px solid rgba(255,255,255,0.06);
 }
 
-.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1.1rem;letter-spacing:0.08em;text-transform:uppercase;}
-.brand img{width:44px;height:44px;border-radius:12px;}
+.brand{display:flex;align-items:center;gap:14px;font-weight:800;font-size:1.1rem;letter-spacing:0.08em;text-transform:uppercase;}
+.brand img{width:56px;height:56px;border-radius:18px;object-fit:cover;border:1px solid rgba(255,255,255,0.12);}
 .nav-links{display:flex;gap:10px;flex-wrap:wrap;}
-.nav-link{padding:10px 13px;border-radius:999px;font-size:0.92rem;color:var(--muted);transition:0.25s ease;}
+.nav-link{padding:10px 14px;border-radius:999px;font-size:0.92rem;color:var(--muted);transition:background 0.25s ease,color 0.25s ease;}
 .nav-link:hover,.nav-link.active{background:rgba(255,207,64,0.16);color:var(--text);}
 
-main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
+main{width:min(1100px, calc(100% - 32px));margin:0 auto;padding:28px 0 80px;}
 
 .hero{
   display:grid;
-  grid-template-columns:1.2fr 0.8fr;
+  grid-template-columns:minmax(0, 1.2fr) minmax(0, 0.8fr);
   gap:28px;
   padding:34px;
   border-radius:30px;
-  background:linear-gradient(135deg, rgba(255,207,64,0.14), rgba(255,138,61,0.1));
-  border:1px solid rgba(255,207,64,0.24);
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
   box-shadow:var(--shadow);
+  backdrop-filter:blur(2px);
 }
 
 .hero h1{font-size:clamp(2rem, 4vw, 3.2rem);line-height:1.05;margin:12px 0 14px;}
 .eyebrow{display:inline-block;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.08);color:var(--accent);font-size:0.82rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;}
 .hero p{color:var(--muted);font-size:1rem;max-width:700px;}
-.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 18px;}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:999px;font-weight:700;border:1px solid transparent;transition:0.2s ease;cursor:pointer;}
-.btn:hover{transform:translateY(-2px);}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 22px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:13px 20px;border-radius:999px;font-weight:700;border:1px solid transparent;transition:transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;cursor:pointer;box-shadow:0 12px 24px rgba(0,0,0,0.12);text-decoration:none;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(0,0,0,0.18);}
+.btn:focus-visible{outline:2px solid rgba(255,207,64,0.85);outline-offset:4px;}
 .btn-primary{background:linear-gradient(135deg, var(--accent), var(--accent-2));color:#1c1202;}
-.btn-secondary{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.16);color:var(--text);} 
-.hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
-.badge{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:0.95rem;}
-.hero-panel{display:flex;align-items:center;justify-content:center;}
-.hero-card{width:100%;padding:24px;border-radius:24px;background:rgba(14,10,20,0.72);border:1px solid rgba(255,255,255,0.1);box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);}
-.hero-card h3{font-size:1.15rem;margin-bottom:10px;}
-.hero-card ul{list-style:none;display:grid;gap:8px;color:var(--muted);} 
-.hero-card li::before{content:"☕ ";margin-right:6px;color:var(--accent);}
+.btn-primary:hover{background:linear-gradient(135deg, #ffd75d, #ff9a5a);}
+.btn-secondary{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.18);color:var(--text);}
+.btn-secondary:hover{background:rgba(255,255,255,0.14);}
 
-.section{padding:32px 0 8px;}
-.section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
-.section-head h2{font-size:1.45rem;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+.badge{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);font-size:0.95rem;}
+.hero-panel{display:flex;align-items:center;justify-content:center;}
+.hero-card{width:100%;min-height:220px;padding:24px;border-radius:24px;background:rgba(14,10,20,0.78);border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);}
+.hero-card h3{font-size:1.15rem;margin-bottom:12px;}
+.hero-card ul{list-style:none;display:grid;gap:10px;color:var(--muted);}
+.hero-card li{display:flex;align-items:flex-start;gap:8px;}
+.hero-card li::before{content:"☕";color:var(--accent);font-size:0.95rem;line-height:1.2;}
+
+.section{padding:40px 0 12px;}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap;}
+.section-head h2{font-size:1.55rem;}
 .section-head p{color:var(--muted);max-width:680px;}
-.panel{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:24px;padding:22px;box-shadow:var(--shadow);}
-.panel+.panel{margin-top:16px;}
+.panel{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:24px;box-shadow:var(--shadow);}
+.panel+.panel{margin-top:18px;}
 
 .door-grid{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:18px;margin-bottom:18px;}
 .door-card{padding:24px;border-radius:24px;background:linear-gradient(145deg, rgba(255,207,64,0.12), rgba(255,255,255,0.04));border:1px solid rgba(255,255,255,0.12);}
@@ -171,7 +232,7 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
 <body>
   <header class="topbar">
     <a class="brand" href="#home">
-      <img src="logo.png" alt="What's On The Menu? logo">
+      <img src="WhatsOnTheMenuLogo.png" alt="What's On The Menu? logo">
       <span>What's On The Menu?</span>
     </a>
     <nav class="nav-links">
@@ -202,11 +263,11 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
       </div>
       <div class="hero-panel">
         <div class="hero-card">
-          <h3>Tonight’s Atmosphere</h3>
+          <h3>Gameplay Overview</h3>
           <ul>
             <li>Two doors, one path to the café, one path to nothing.</li>
-            <li>The dessert table brings bold choices and bigger stakes.</li>
-            <li>The Secret Menu offers helpful boosts for brave guests.</li>
+            <li>The dessert table brings intense competition and bigger stakes.</li>
+            <li>The Secret Menu offers helpful boosts for the guests.</li>
           </ul>
         </div>
       </div>
@@ -227,7 +288,7 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
           <p>Choose this door to earn 1 Star and walk into the café.</p>
           <ul>
             <li>Participants who choose the correct door earn ⭐ 1 Star.</li>
-            <li>Audience members who gifted their votes to a winner participant earn ⭐ 1 Star with them.</li>
+            <li>Audience members who gifted their votes to the door keeper or a winner participant earn ⭐ 1 Star with them.</li>
           </ul>
         </article>
         <article class="door-card alt">
@@ -236,7 +297,7 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
           <p>Choose this door and you leave empty-handed.</p>
           <ul>
             <li>Participants who choose the wrong door earn nothing.</li>
-            <li>Audience votes can be spread, but only one winning participant can collect the bonus star.</li>
+            <li>Audience members may vote on more than one participant, but only one winning participant can grant them the bonus star.</li>
           </ul>
         </article>
       </div>
@@ -282,7 +343,7 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
           <div class="list">
             <div class="list-item">
               <strong>Hidden plates</strong>
-              <span>One plate hides the Sweet Cake and the other hides the Sour Cake.</span>
+              <span>One plate hides the Sweet Cake and the other hides the Sour Cake, Only the VIP knows which is which.</span>
             </div>
             <div class="list-item">
               <strong>The guest's choice</strong>
@@ -290,7 +351,7 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
             </div>
             <div class="list-item">
               <strong>Results</strong>
-              <span>Sweet Cake = Guest earns ⭐ 1 Star; Sour Cake = VIP earns ⭐ 1 Star.</span>
+              <span>if the guest chooses the Sweet Cake = Guest earns ⭐ 1 Star; Sour Cake = VIP earns ⭐ 1 Star.</span>
             </div>
           </div>
         </div>
@@ -301,7 +362,7 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
       <div class="section-head">
         <div>
           <h2>Secret Menu</h2>
-          <p>The Secret Menu gives guests a few special effects to help during a match, and each service rings the bell for Aster.</p>
+          <p>The Secret Menu gives guests a few special effects to help during a match, and each service rings the bell for the waiters.<br>Audience members can intervene by buying an item from the secret menu for the guest.</p>
         </div>
       </div>
       <div class="services-grid">
@@ -312,12 +373,12 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
         </article>
         <article class="service-card">
           <h3>Sweet Treat</h3>
-          <p>Gain extra time with a +30 second extension.</p>
+          <p>Gain extra time with a +60 second extension.</p>
           <span class="cost">Cost: 3 Buff</span>
         </article>
         <article class="service-card">
           <h3>Marry Me</h3>
-          <p>Trigger Plate Roulette and rely on fate.</p>
+          <p>Trigger Plate Roulette and both of you will not know which plate is which.</p>
           <span class="cost">Cost: 5 Buff</span>
         </article>
       </div>
@@ -337,19 +398,14 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
           <span>Star earned</span>
         </div>
         <div class="stat-card">
-          <strong>Audience support</strong>
-          <h3>+1</h3>
-          <span>Maximum shared star</span>
+          <strong>Collect Stars</strong>
+          <h3>⭐</h3>
+          <span>And earn bonus rewards</span>
         </div>
         <div class="stat-card">
-          <strong>Sweet Treats</strong>
-          <h3>+30s</h3>
-          <span>Extra time</span>
-        </div>
-        <div class="stat-card">
-          <strong>VIP tables</strong>
-          <h3>3 min</h3>
-          <span>Challenge window</span>
+          <strong>Leaderboard</strong>
+          <h3>🏆</h3>
+          <span>Climb the ranks and earn special titles</span>
         </div>
       </div>
     </section>
@@ -364,7 +420,7 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
       <div class="milestones">
         <div class="milestone-card">
           <div class="stars">3★</div>
-          <p>Draw 1 free Secret Menu item.</p>
+          <p>Receive 1 free Secret Menu item.</p>
         </div>
         <div class="milestone-card">
           <div class="stars">6★</div>
@@ -414,13 +470,13 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
 
     <section id="enjoy" class="section">
       <div class="closing-card">
-        <h2>Enjoy Your Stay</h2>
-        <p>Some orders are sweeter than others. Welcome to Aster’s Café, where every choice could turn into a story worth telling.</p>
+        <h2>Thank You!</h2>
+        <p>Welcome to Aster’s Café, We will be holding more events in the future. We love you all!</p>
         <a class="btn btn-primary" href="#home">Back to top</a>
       </div>
     </section>
 
-    <div class="footer-note">Aster's Café • Sweet choices, bitter surprises, and loyal regulars.</div>
+    <div class="footer-note">Aster's Café • Thank you all for participating!</div>
   </main>
 
   <script>
@@ -440,6 +496,58 @@ main{width:min(1200px, calc(100% - 32px));margin:0 auto;padding:24px 0 80px;}
 
     window.addEventListener('scroll', setActive);
     window.addEventListener('load', setActive);
+
+    const cursorDot = document.createElement('div');
+    cursorDot.className = 'cursor-dot';
+    document.body.appendChild(cursorDot);
+
+    const particleField = document.createElement('div');
+    particleField.className = 'cursor-particle-field';
+    document.body.appendChild(particleField);
+
+    const interactiveSelectors = 'a, .btn, .nav-link, .door-card, .service-card, .title-card, .panel';
+    const interactiveEls = document.querySelectorAll(interactiveSelectors);
+
+    const updateCursor = (x, y) => {
+      cursorDot.style.left = `${x}px`;
+      cursorDot.style.top = `${y}px`;
+    };
+
+    const spawnParticle = (x, y) => {
+      const particle = document.createElement('div');
+      particle.className = 'cursor-particle';
+      const size = Math.random() * 6 + 6;
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * 22 + 18;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      particle.style.background = `rgba(255,207,64,${Math.random() * 0.4 + 0.45})`;
+      particle.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+      particle.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+      particle.style.animation = `particlePop ${Math.random() * 0.35 + 0.35}s ease-out forwards`;
+      particleField.appendChild(particle);
+      setTimeout(() => particle.remove(), 500);
+    };
+
+    document.addEventListener('mousemove', (event) => {
+      updateCursor(event.clientX, event.clientY);
+      if (Math.random() > 0.88) spawnParticle(event.clientX, event.clientY);
+    });
+
+    document.addEventListener('mousedown', () => {
+      cursorDot.classList.add('cursor-active');
+      setTimeout(() => cursorDot.classList.remove('cursor-active'), 120);
+    });
+
+    interactiveEls.forEach((el) => {
+      el.addEventListener('mouseenter', () => cursorDot.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => cursorDot.classList.remove('cursor-hover'));
+      el.addEventListener('mousemove', (event) => {
+        if (Math.random() > 0.7) spawnParticle(event.clientX, event.clientY);
+      });
+    });
   </script>
 </body>
 </html>
